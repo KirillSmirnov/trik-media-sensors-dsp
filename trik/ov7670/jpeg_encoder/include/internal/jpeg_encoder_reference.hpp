@@ -730,11 +730,12 @@ class JPGEncoder
     }
   }
 
-  //YCbCr 422p - img format
-  void getBlock(PixIn* img, int xpos, int ypos, int width, int height) 
+  // YCbCr nv16 - img format
+  // Two planes: Y plane and CbCr combined plane
+  void getBlock(PixIn* img, int xpos, int ypos, int width, int height)
   {
     const uint16_t *UV = reinterpret_cast<const uint16_t*>(img + width*height*sizeof(uint8_t));
-    
+
     int pos=0;
     #pragma MUST_ITERATE(8, ,8)
     for (int y=0; y<8; y++) {
@@ -742,7 +743,7 @@ class JPGEncoder
       #pragma MUST_ITERATE(8, ,8)
       for (int x=0; x<8; x++) {
         const int xy_shift = y_shift + (xpos + x);
-    		const uint16_t uv = UV[xy_shift/2];
+        const uint16_t uv = UV[xy_shift/2];
         YDU[pos]=img[xy_shift]-128;
         UDU[pos]=static_cast<PixIn>(uv>>8)-128;
         VDU[pos]=static_cast<PixIn>(uv)-128;
